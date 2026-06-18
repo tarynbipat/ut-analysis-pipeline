@@ -106,6 +106,3 @@ uv run ruff check src/
 uv run black src/
 ```
 
-## License
-
-MIT
