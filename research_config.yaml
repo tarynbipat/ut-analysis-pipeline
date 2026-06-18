@@ -1,0 +1,93 @@
+project_id: ut-2026-embr-hobbyist
+project_name: "Embr Usability Test - Hobbyist"
+description: "Testing Embr deployment experience for hobbyist users deploying web apps via Vercel"
+
+participants:
+  - id: P001
+    name: "Participant 1"
+    demographics:
+      tech_proficiency: high
+      git_understanding: yes
+      deployment_platform: vercel
+      user_type: hobbyist
+  - id: P002
+    name: "Participant 2"
+    demographics:
+      tech_proficiency: high
+      git_understanding: yes
+      deployment_platform: vercel
+      user_type: hobbyist
+  - id: P003
+    name: "Participant 3"
+    demographics:
+      tech_proficiency: low
+      git_understanding: limited
+      deployment_platform: vercel
+      user_type: hobbyist
+  - id: P004
+    name: "Participant 4"
+    demographics:
+      tech_proficiency: high
+      git_understanding: yes
+      deployment_platform: vercel
+      user_type: hobbyist
+  - id: P005
+    name: "Participant 5"
+    demographics:
+      tech_proficiency: high
+      git_understanding: yes
+      deployment_platform: vercel
+      user_type: hobbyist
+  - id: P006
+    name: "Participant 6"
+    demographics:
+      tech_proficiency: high
+      git_understanding: yes
+      deployment_platform: vercel
+      user_type: hobbyist
+
+tasks:
+  - id: TASK-001
+    name: "Deploy a template"
+    description: "Deploy a template application using Embr"
+    success_criteria: "Template successfully deployed and accessible"
+    time_limit_seconds: 600
+
+  - id: TASK-002
+    name: "Explore portal experience"
+    description: "Explore the Embr portal and answer questions about the experience"
+    success_criteria: "Participant navigates portal and provides feedback"
+    time_limit_seconds: 600
+
+  - id: TASK-003
+    name: "Deploy using alternate method"
+    description: "Make a change to the app and redeploy using an alternate method (Embr CLI, GitHub Copilot, or VSCode extension)"
+    success_criteria: "App change deployed successfully via alternate method"
+    time_limit_seconds: 900
+
+  - id: TASK-004
+    name: "Deploy using another method (optional)"
+    description: "Make a change and try deploying using a different method than Task 3"
+    success_criteria: "App change deployed successfully via a second alternate method"
+    time_limit_seconds: 900
+
+heuristic_framework: "nielsen_10"
+
+custom_heuristics:
+  - "Visibility of system status"
+  - "Match between system and real world"
+  - "User control and freedom"
+  - "Error prevention and recovery"
+  - "Flexibility and efficiency"
+  - "Aesthetic and minimalist design"
+  - "Help and documentation"
+  - "Trust and credibility"
+  - "Developer experience"
+  - "Onboarding clarity"
+
+research_date: 2026-06-01
+
+metadata:
+  researcher: "Taryn Bipat"
+  platform: "Web/CLI/VSCode"
+  context: "Hobbyist developers using Vercel for deployment"

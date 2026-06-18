@@ -1,0 +1,64 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ut-analysis-pipeline"
+version = "0.1.0"
+description = "Usability test analysis pipeline with GitHub Copilot CLI skills + MCP server"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Usability Test Analysis Team"}
+]
+dependencies = [
+    "mcp>=0.1.0",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "python-docx>=1.0.0",
+    "markdown>=3.5.0",
+    "pyyaml>=6.0",
+    "httpx>=0.24.0",
+    "click>=8.1.0",
+    "rich>=13.0.0",
+    "tenacity>=8.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+    "black>=23.0.0",
+    "mypy>=1.5.0",
+]
+
+[project.scripts]
+ut-analysis = "ut_analysis.cli:main"
+ut-mcp-server = "ut_analysis.mcp_server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ut_analysis", "src/skills"]
+
+[tool.hatch.build.targets.wheel.sources]
+"src/skills" = "ut_analysis/skills"
+
+[tool.black]
+line-length = 100
+target-version = ['py311']
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
