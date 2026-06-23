@@ -246,6 +246,8 @@ class PipelineStatus(BaseModel):
         "severity_rating_complete",
         "heuristic_mapping_complete",
         "synthesis_complete",
+        "critique_complete",
+        "reconciliation_complete",
         "reporting_complete",
         "clipping_complete",
         "recommendations_complete",
@@ -379,4 +381,149 @@ class ReportMetadata(BaseModel):
     output_formats: list[str]
     insights_covered: int
     generated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# --- Synthesis sub-models (used by ut-synthesizer) ---
+
+
+class SynthesisEvidence(BaseModel):
+    """Evidence backing a synthesis insight."""
+
+    finding_ids: list[str]
+    participant_count: int
+    task_count: int
+    severity_distribution: dict[int, int] = Field(default_factory=dict)
+
+
+class SynthesisPattern(BaseModel):
+    """Patterns identified in a synthesis insight."""
+
+    cross_participant: str
+    cross_task: str
+    workflow_impact: str
+
+
+class SynthesisRecommendation(BaseModel):
+    """Recommendation produced during synthesis."""
+
+    priority: str
+    description: str
+    expected_impact: str
+    implementation_effort: str
+    business_value: str
+
+
+class SynthesisInsight(BaseModel):
+    """A single insight produced by the synthesizer."""
+
+    insight_id: str
+    title: str
+    theme: str
+    severity: str
+    description: str
+    evidence: SynthesisEvidence
+    patterns: SynthesisPattern
+    recommendations: list[SynthesisRecommendation] = Field(default_factory=list)
+    synthesized_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# --- Evidence Critic models (ut-critic agent) ---
+
+
+class EvidenceCritique(BaseModel):
+    """Structured critique of a finding, theme, or recommendation."""
+
+    critique_id: str
+    target_type: Literal["finding", "theme", "insight", "recommendation"]
+    target_id: str
+    critique_summary: str
+    evidence_strength: Literal["strong", "moderate", "weak", "insufficient"]
+    issues_found: list[str] = Field(default_factory=list)
+    unsupported_claims: list[str] = Field(default_factory=list)
+    overgeneralizations: list[str] = Field(default_factory=list)
+    missing_participant_segments: list[str] = Field(default_factory=list)
+    recommended_revision: Optional[str] = None
+    confidence_rating: float = Field(ge=0.0, le=1.0)
+    requires_human_review: bool = False
+    review_reason: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class CriticReport(BaseModel):
+    """Aggregated output from the evidence critic agent."""
+
+    critic_batch_id: str
+    source_synthesis_id: str
+    critiques: list[EvidenceCritique]
+    summary: dict[str, Any] = Field(default_factory=dict)
+    overall_evidence_quality: Literal["high", "acceptable", "concerning", "inadequate"]
+    human_review_required: bool = False
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# --- Reconciliation models (ut-reconciler agent) ---
+
+
+class Reconciliation(BaseModel):
+    """Reconciliation of a contradiction into a nuanced interpretation."""
+
+    reconciliation_id: str
+    contradiction_id: str
+    theme_ids: list[str] = Field(default_factory=list)
+    tension_description: str
+    participant_groups: dict[str, list[str]] = Field(default_factory=dict)
+    possible_explanations: list[str] = Field(default_factory=list)
+    design_implication: str
+    changes_original_finding: bool = False
+    further_research_needed: bool = False
+    research_questions: list[str] = Field(default_factory=list)
+    confidence: float = Field(ge=0.0, le=1.0)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class ReconciliationReport(BaseModel):
+    """Aggregated output from the reconciler agent."""
+
+    reconciliation_batch_id: str
+    source_contradictions_id: str
+    reconciliations: list[Reconciliation]
+    unresolved_tensions: list[str] = Field(default_factory=list)
+    research_gaps: list[str] = Field(default_factory=list)
+    summary: dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# --- Human-in-the-Loop Review Checkpoint ---
+
+
+class HumanReviewCheckpoint(BaseModel):
+    """A checkpoint requiring human review before proceeding."""
+
+    checkpoint_id: str
+    stage: str
+    reason: str
+    related_artifact_id: str
+    artifact_type: Literal[
+        "finding", "theme", "insight", "recommendation",
+        "critique", "reconciliation", "contradiction"
+    ]
+    severity: Literal["critical", "high", "medium", "low"]
+    suggested_reviewer_action: str
+    status: Literal["pending", "approved", "rejected", "needs_revision"] = "pending"
+    reviewer_notes: Optional[str] = None
+    reviewed_by: Optional[str] = None
+    reviewed_at: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class ReviewGate(BaseModel):
+    """A review gate aggregating checkpoints before a pipeline phase can advance."""
+
+    gate_id: str
+    stage: str
+    checkpoints: list[HumanReviewCheckpoint]
+    all_approved: bool = False
+    blocking_count: int = 0
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 """Package initialization for models."""

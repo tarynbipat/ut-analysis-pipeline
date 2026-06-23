@@ -128,7 +128,9 @@ class ControllerSkill:
             "evaluation_complete": ["severity_rating_complete"],
             "severity_rating_complete": ["heuristic_mapping_complete"],
             "heuristic_mapping_complete": ["synthesis_complete"],
-            "synthesis_complete": ["reporting_complete"],
+            "synthesis_complete": ["critique_complete", "reporting_complete"],
+            "critique_complete": ["reconciliation_complete", "reporting_complete"],
+            "reconciliation_complete": ["reporting_complete"],
         }
 
         # Validate transition

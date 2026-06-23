@@ -376,3 +376,161 @@ class ReportManager:
     def list_reports(self) -> list[str]:
         """List all report batch IDs."""
         return [f.stem.replace("_report_metadata", "") for f in self.reports_dir.glob("*_report_metadata.json")]
+
+
+class HeuristicManager:
+    """Manages heuristic mapping storage and retrieval."""
+
+    def __init__(self, data_dir: Path) -> None:
+        self.data_dir = Path(data_dir)
+        self.data_dir.mkdir(exist_ok=True, parents=True)
+        self.heuristic_dir = self.data_dir / "heuristics"
+        self.heuristic_dir.mkdir(exist_ok=True, parents=True)
+
+    def save_heuristic_mappings(self, batch_id: str, data: dict[str, Any]) -> Path:
+        """Save heuristic mappings to JSON file."""
+        filepath = self.heuristic_dir / f"{batch_id}_heuristics.json"
+        with open(filepath, "w") as f:
+            json.dump(data, f, indent=2, default=str)
+        logger.info(f"Saved heuristic mappings: {filepath}")
+        return filepath
+
+    def load_heuristic_mappings(self, batch_id: str) -> dict[str, Any]:
+        """Load heuristic mappings from file."""
+        filepath = self.heuristic_dir / f"{batch_id}_heuristics.json"
+        if not filepath.exists():
+            raise FileNotFoundError(f"Heuristic mappings not found: {batch_id}")
+        with open(filepath, "r") as f:
+            return json.load(f)
+
+    def list_heuristic_mappings(self) -> list[str]:
+        """List all heuristic mapping batch IDs."""
+        return [f.stem.replace("_heuristics", "") for f in self.heuristic_dir.glob("*_heuristics.json")]
+
+
+class CriticManager:
+    """Manages evidence critique storage and retrieval."""
+
+    def __init__(self, data_dir: Path) -> None:
+        self.data_dir = Path(data_dir)
+        self.data_dir.mkdir(exist_ok=True, parents=True)
+        self.critiques_dir = self.data_dir / "critiques"
+        self.critiques_dir.mkdir(exist_ok=True, parents=True)
+
+    def save_critique(self, critic_batch_id: str, critique_data: dict[str, Any]) -> Path:
+        """Save critique results to JSON file."""
+        filepath = self.critiques_dir / f"{critic_batch_id}_critique.json"
+        with open(filepath, "w") as f:
+            json.dump(critique_data, f, indent=2, default=str)
+        logger.info(f"Saved critique: {filepath}")
+        return filepath
+
+    def load_critique(self, critic_batch_id: str) -> dict[str, Any]:
+        """Load critique results from file."""
+        filepath = self.critiques_dir / f"{critic_batch_id}_critique.json"
+        if not filepath.exists():
+            raise FileNotFoundError(f"Critique not found: {critic_batch_id}")
+        with open(filepath, "r") as f:
+            return json.load(f)
+
+    def list_critiques(self) -> list[str]:
+        """List all critique batch IDs."""
+        return [f.stem.replace("_critique", "") for f in self.critiques_dir.glob("*_critique.json")]
+
+
+class ReconciliationManager:
+    """Manages reconciliation storage and retrieval."""
+
+    def __init__(self, data_dir: Path) -> None:
+        self.data_dir = Path(data_dir)
+        self.data_dir.mkdir(exist_ok=True, parents=True)
+        self.reconciliation_dir = self.data_dir / "reconciliations"
+        self.reconciliation_dir.mkdir(exist_ok=True, parents=True)
+
+    def save_reconciliation(self, batch_id: str, data: dict[str, Any]) -> Path:
+        """Save reconciliation results to JSON file."""
+        filepath = self.reconciliation_dir / f"{batch_id}_reconciliation.json"
+        with open(filepath, "w") as f:
+            json.dump(data, f, indent=2, default=str)
+        logger.info(f"Saved reconciliation: {filepath}")
+        return filepath
+
+    def load_reconciliation(self, batch_id: str) -> dict[str, Any]:
+        """Load reconciliation results from file."""
+        filepath = self.reconciliation_dir / f"{batch_id}_reconciliation.json"
+        if not filepath.exists():
+            raise FileNotFoundError(f"Reconciliation not found: {batch_id}")
+        with open(filepath, "r") as f:
+            return json.load(f)
+
+    def list_reconciliations(self) -> list[str]:
+        """List all reconciliation batch IDs."""
+        return [f.stem.replace("_reconciliation", "") for f in self.reconciliation_dir.glob("*_reconciliation.json")]
+
+
+class ReviewCheckpointManager:
+    """Manages human review checkpoints."""
+
+    def __init__(self, data_dir: Path) -> None:
+        self.data_dir = Path(data_dir)
+        self.data_dir.mkdir(exist_ok=True, parents=True)
+        self.review_dir = self.data_dir / "review_checkpoints"
+        self.review_dir.mkdir(exist_ok=True, parents=True)
+
+    def save_checkpoints(self, batch_id: str, data: dict[str, Any]) -> Path:
+        """Save review checkpoints to JSON file."""
+        filepath = self.review_dir / f"{batch_id}_checkpoints.json"
+        with open(filepath, "w") as f:
+            json.dump(data, f, indent=2, default=str)
+        logger.info(f"Saved review checkpoints: {filepath}")
+        return filepath
+
+    def load_checkpoints(self, batch_id: str) -> dict[str, Any]:
+        """Load review checkpoints from file."""
+        filepath = self.review_dir / f"{batch_id}_checkpoints.json"
+        if not filepath.exists():
+            raise FileNotFoundError(f"Review checkpoints not found: {batch_id}")
+        with open(filepath, "r") as f:
+            return json.load(f)
+
+    def list_checkpoints(self) -> list[str]:
+        """List all review checkpoint batch IDs."""
+        return [f.stem.replace("_checkpoints", "") for f in self.review_dir.glob("*_checkpoints.json")]
+
+    def update_checkpoint_status(
+        self,
+        batch_id: str,
+        checkpoint_id: str,
+        status: str,
+        reviewer_notes: Optional[str] = None,
+        reviewed_by: Optional[str] = None,
+    ) -> dict[str, Any]:
+        """Update the status of a specific checkpoint."""
+        data = self.load_checkpoints(batch_id)
+        checkpoints = data.get("checkpoints", [])
+
+        for cp in checkpoints:
+            if cp.get("checkpoint_id") == checkpoint_id:
+                cp["status"] = status
+                if reviewer_notes:
+                    cp["reviewer_notes"] = reviewer_notes
+                if reviewed_by:
+                    cp["reviewed_by"] = reviewed_by
+                cp["reviewed_at"] = datetime.utcnow().isoformat()
+                break
+        else:
+            raise ValueError(f"Checkpoint not found: {checkpoint_id}")
+
+        self.save_checkpoints(batch_id, data)
+        return cp
+
+    def get_pending_checkpoints(self) -> list[dict[str, Any]]:
+        """Get all pending review checkpoints across all batches."""
+        pending = []
+        for batch_id in self.list_checkpoints():
+            data = self.load_checkpoints(batch_id)
+            for cp in data.get("checkpoints", []):
+                if cp.get("status") == "pending":
+                    cp["_batch_id"] = batch_id
+                    pending.append(cp)
+        return pending
