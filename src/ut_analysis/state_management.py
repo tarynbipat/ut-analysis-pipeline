@@ -534,3 +534,208 @@ class ReviewCheckpointManager:
                     cp["_batch_id"] = batch_id
                     pending.append(cp)
         return pending
+
+
+class ThemeOrchestrationManager:
+    """Manages theme orchestration plan storage."""
+
+    def __init__(self, data_dir: Path) -> None:
+        self.data_dir = Path(data_dir)
+        self.data_dir.mkdir(exist_ok=True, parents=True)
+        self.orchestration_dir = self.data_dir / "theme_orchestration"
+        self.orchestration_dir.mkdir(exist_ok=True, parents=True)
+
+    def save_plan(self, plan_id: str, data: dict[str, Any]) -> Path:
+        """Save orchestration plan."""
+        filepath = self.orchestration_dir / f"{plan_id}_plan.json"
+        with open(filepath, "w") as f:
+            json.dump(data, f, indent=2, default=str)
+        logger.info(f"Saved orchestration plan: {filepath}")
+        return filepath
+
+    def load_plan(self, plan_id: str) -> dict[str, Any]:
+        """Load orchestration plan."""
+        filepath = self.orchestration_dir / f"{plan_id}_plan.json"
+        if not filepath.exists():
+            raise FileNotFoundError(f"Orchestration plan not found: {plan_id}")
+        with open(filepath, "r") as f:
+            return json.load(f)
+
+    def list_plans(self) -> list[str]:
+        """List all orchestration plan IDs."""
+        return [f.stem.replace("_plan", "") for f in self.orchestration_dir.glob("*_plan.json")]
+
+
+class ThematicAnalysisManager:
+    """Manages thematic lane analysis storage."""
+
+    def __init__(self, data_dir: Path) -> None:
+        self.data_dir = Path(data_dir)
+        self.data_dir.mkdir(exist_ok=True, parents=True)
+        self.themes_dir = self.data_dir / "themes"
+        self.themes_dir.mkdir(exist_ok=True, parents=True)
+
+    def save_lane_analysis(self, lane_id: str, data: dict[str, Any]) -> Path:
+        """Save thematic lane analysis."""
+        filepath = self.themes_dir / f"{lane_id}_theme_analysis.json"
+        with open(filepath, "w") as f:
+            json.dump(data, f, indent=2, default=str)
+        logger.info(f"Saved lane analysis: {filepath}")
+        return filepath
+
+    def load_lane_analysis(self, lane_id: str) -> dict[str, Any]:
+        """Load thematic lane analysis."""
+        filepath = self.themes_dir / f"{lane_id}_theme_analysis.json"
+        if not filepath.exists():
+            raise FileNotFoundError(f"Lane analysis not found: {lane_id}")
+        with open(filepath, "r") as f:
+            return json.load(f)
+
+    def list_lane_analyses(self) -> list[str]:
+        """List all lane analysis IDs."""
+        return [
+            f.stem.replace("_theme_analysis", "")
+            for f in self.themes_dir.glob("*_theme_analysis.json")
+        ]
+
+    def save_consolidation(self, consolidation_id: str, data: dict[str, Any]) -> Path:
+        """Save theme consolidation."""
+        filepath = self.themes_dir / f"{consolidation_id}_consolidation.json"
+        with open(filepath, "w") as f:
+            json.dump(data, f, indent=2, default=str)
+        logger.info(f"Saved consolidation: {filepath}")
+        return filepath
+
+    def load_consolidation(self, consolidation_id: str) -> dict[str, Any]:
+        """Load theme consolidation."""
+        filepath = self.themes_dir / f"{consolidation_id}_consolidation.json"
+        if not filepath.exists():
+            raise FileNotFoundError(f"Consolidation not found: {consolidation_id}")
+        with open(filepath, "r") as f:
+            return json.load(f)
+
+
+class EvalRubricManager:
+    """Manages evaluation rubric results storage."""
+
+    def __init__(self, data_dir: Path) -> None:
+        self.data_dir = Path(data_dir)
+        self.data_dir.mkdir(exist_ok=True, parents=True)
+        self.evals_dir = self.data_dir / "evals"
+        self.evals_dir.mkdir(exist_ok=True, parents=True)
+
+    def save_eval_results(self, run_id: str, data: dict[str, Any]) -> Path:
+        """Save evaluation results."""
+        filepath = self.evals_dir / f"{run_id}_eval_results.json"
+        with open(filepath, "w") as f:
+            json.dump(data, f, indent=2, default=str)
+        logger.info(f"Saved eval results: {filepath}")
+        return filepath
+
+    def load_eval_results(self, run_id: str) -> dict[str, Any]:
+        """Load evaluation results."""
+        filepath = self.evals_dir / f"{run_id}_eval_results.json"
+        if not filepath.exists():
+            raise FileNotFoundError(f"Eval results not found: {run_id}")
+        with open(filepath, "r") as f:
+            return json.load(f)
+
+    def list_eval_results(self) -> list[str]:
+        """List all eval result IDs."""
+        return [
+            f.stem.replace("_eval_results", "")
+            for f in self.evals_dir.glob("*_eval_results.json")
+        ]
+
+
+class ResearchGapManager:
+    """Manages research gap analysis storage."""
+
+    def __init__(self, data_dir: Path) -> None:
+        self.data_dir = Path(data_dir)
+        self.data_dir.mkdir(exist_ok=True, parents=True)
+        self.gaps_dir = self.data_dir / "research_gaps"
+        self.gaps_dir.mkdir(exist_ok=True, parents=True)
+
+    def save_gaps(self, run_id: str, data: dict[str, Any]) -> Path:
+        """Save research gaps."""
+        filepath = self.gaps_dir / f"{run_id}_research_gaps.json"
+        with open(filepath, "w") as f:
+            json.dump(data, f, indent=2, default=str)
+        logger.info(f"Saved research gaps: {filepath}")
+        return filepath
+
+    def load_gaps(self, run_id: str) -> dict[str, Any]:
+        """Load research gaps."""
+        filepath = self.gaps_dir / f"{run_id}_research_gaps.json"
+        if not filepath.exists():
+            raise FileNotFoundError(f"Research gaps not found: {run_id}")
+        with open(filepath, "r") as f:
+            return json.load(f)
+
+    def list_gaps(self) -> list[str]:
+        """List all research gap IDs."""
+        return [
+            f.stem.replace("_research_gaps", "")
+            for f in self.gaps_dir.glob("*_research_gaps.json")
+        ]
+
+
+class NextStudyManager:
+    """Manages next study plan storage."""
+
+    def __init__(self, data_dir: Path) -> None:
+        self.data_dir = Path(data_dir)
+        self.data_dir.mkdir(exist_ok=True, parents=True)
+        self.plans_dir = self.data_dir / "next_study"
+        self.plans_dir.mkdir(exist_ok=True, parents=True)
+
+    def save_plan(self, run_id: str, data: dict[str, Any]) -> Path:
+        """Save next study plan."""
+        filepath = self.plans_dir / f"{run_id}_next_study.json"
+        with open(filepath, "w") as f:
+            json.dump(data, f, indent=2, default=str)
+        logger.info(f"Saved next study plan: {filepath}")
+        return filepath
+
+    def load_plan(self, run_id: str) -> dict[str, Any]:
+        """Load next study plan."""
+        filepath = self.plans_dir / f"{run_id}_next_study.json"
+        if not filepath.exists():
+            raise FileNotFoundError(f"Next study plan not found: {run_id}")
+        with open(filepath, "r") as f:
+            return json.load(f)
+
+    def list_plans(self) -> list[str]:
+        """List all next study plan IDs."""
+        return [f.stem.replace("_next_study", "") for f in self.plans_dir.glob("*_next_study.json")]
+
+
+class PipelineRunManager:
+    """Manages pipeline run summary storage."""
+
+    def __init__(self, data_dir: Path) -> None:
+        self.data_dir = Path(data_dir)
+        self.data_dir.mkdir(exist_ok=True, parents=True)
+        self.runs_dir = self.data_dir / "runs"
+        self.runs_dir.mkdir(exist_ok=True, parents=True)
+
+    def save_run_summary(self, run_id: str, data: dict[str, Any]) -> Path:
+        """Save pipeline run summary."""
+        filepath = self.runs_dir / f"{run_id}_run_summary.json"
+        with open(filepath, "w") as f:
+            json.dump(data, f, indent=2, default=str)
+        logger.info(f"Saved run summary: {filepath}")
+        return filepath
+
+    def load_run_summary(self, run_id: str) -> dict[str, Any]:
+        """Load pipeline run summary."""
+        filepath = self.runs_dir / f"{run_id}_run_summary.json"
+        if not filepath.exists():
+            raise FileNotFoundError(f"Run summary not found: {run_id}")
+        with open(filepath, "r") as f:
+            return json.load(f)
+
+    def list_runs(self) -> list[str]:
+        """List all run IDs."""
+        return [f.stem.replace("_run_summary", "") for f in self.runs_dir.glob("*_run_summary.json")]

@@ -526,4 +526,242 @@ class ReviewGate(BaseModel):
     all_approved: bool = False
     blocking_count: int = 0
     created_at: datetime = Field(default_factory=datetime.utcnow)
-"""Package initialization for models."""
+
+
+# --- Theme Orchestration models ---
+
+
+class ThemeLaneHandoffItem(BaseModel):
+    """Single finding handoff item for a thematic analysis lane."""
+
+    finding_id: str
+    participant_id: str
+    task_id: Optional[str] = None
+    rationale: str
+
+
+class ThematicLane(BaseModel):
+    """A single thematic lane for parallel specialist analysis."""
+
+    lane_id: str
+    lane_name: str
+    assigned_agent: str
+    finding_ids: list[str]
+    participant_ids: list[str] = Field(default_factory=list)
+    task_ids: list[str] = Field(default_factory=list)
+    rationale: str
+    expected_output_path: str = ""
+    handoff_items: list[ThemeLaneHandoffItem] = Field(default_factory=list)
+
+
+class ThemeOrchestrationPlan(BaseModel):
+    """Orchestration plan routing findings to parallel thematic lanes."""
+
+    plan_id: str
+    findings_batch_id: str
+    project_id: str
+    run_id: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    source_artifacts: list[str] = Field(default_factory=list)
+    thematic_lanes: list[ThematicLane] = Field(default_factory=list)
+    total_findings: int = 0
+
+
+# --- Thematic Specialist output models ---
+
+
+class ThemeResult(BaseModel):
+    """A single theme identified by a specialist agent."""
+
+    theme_id: str
+    theme_title: str
+    theme_summary: str
+    evidence_count: int
+    participant_count: int
+    task_coverage: list[str] = Field(default_factory=list)
+    representative_quotes: list[str] = Field(default_factory=list)
+    contradictions_or_outliers: list[str] = Field(default_factory=list)
+    product_implication: str = ""
+    confidence: float = Field(ge=0.0, le=1.0)
+    limitations: list[str] = Field(default_factory=list)
+
+
+class ThematicLaneAnalysis(BaseModel):
+    """Output from a thematic specialist agent."""
+
+    lane_id: str
+    lane_name: str
+    agent_name: str
+    source_finding_ids: list[str]
+    themes: list[ThemeResult] = Field(default_factory=list)
+    analyzed_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# --- Theme Consolidation models ---
+
+
+class ConsolidatedTheme(BaseModel):
+    """A theme produced by merging results across specialist lanes."""
+
+    consolidated_theme_id: str
+    title: str
+    summary: str
+    contributing_lanes: list[str] = Field(default_factory=list)
+    source_theme_ids: list[str] = Field(default_factory=list)
+    evidence_strength: Literal["strong", "moderate", "weak", "insufficient"] = "moderate"
+    participant_count: int = 0
+    key_quotes: list[str] = Field(default_factory=list)
+    tensions_or_contradictions: list[str] = Field(default_factory=list)
+    product_implications: list[str] = Field(default_factory=list)
+    confidence: float = Field(ge=0.0, le=1.0, default=0.5)
+    open_questions: list[str] = Field(default_factory=list)
+
+
+class ThemeConsolidation(BaseModel):
+    """Full consolidation output merging parallel thematic analyses."""
+
+    consolidation_id: str
+    project_id: str
+    consolidated_themes: list[ConsolidatedTheme] = Field(default_factory=list)
+    cross_lane_relationships: list[dict[str, Any]] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# --- Contradiction Reconciliation (enhanced) ---
+
+
+class EnhancedContradictionReconciliation(BaseModel):
+    """Nuanced contradiction reconciliation treating tensions as research signal."""
+
+    reconciliation_id: str
+    contradiction_id: str
+    tension_description: str
+    participant_groups: dict[str, list[str]] = Field(default_factory=dict)
+    possible_explanations: list[str] = Field(default_factory=list)
+    explanation_factors: list[
+        Literal[
+            "segment",
+            "experience_level",
+            "task_context",
+            "product_expectation",
+            "evidence_limits",
+            "other",
+        ]
+    ] = Field(default_factory=list)
+    reconciled_interpretation: str
+    design_implications: list[str] = Field(default_factory=list)
+    further_research_needed: bool = False
+    research_questions: list[str] = Field(default_factory=list)
+    confidence: float = Field(ge=0.0, le=1.0, default=0.5)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# --- Evaluation Rubric models ---
+
+
+class RubricScore(BaseModel):
+    """Score for a single rubric dimension."""
+
+    dimension: str
+    score: float = Field(ge=0.0, le=1.0)
+    rationale: str = ""
+    passed: bool = True
+
+
+class EvalResult(BaseModel):
+    """Evaluation result for a single artifact."""
+
+    artifact_id: str
+    artifact_type: str
+    evaluator: str
+    scores: list[RubricScore] = Field(default_factory=list)
+    pass_fail: Literal["pass", "fail", "warning"] = "pass"
+    issues: list[str] = Field(default_factory=list)
+    recommended_fixes: list[str] = Field(default_factory=list)
+    created_human_review_checkpoint: bool = False
+    evaluated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class EvalSummary(BaseModel):
+    """Summary of all evaluation results for a pipeline run."""
+
+    run_id: str
+    total_artifacts_evaluated: int = 0
+    passed: int = 0
+    failed: int = 0
+    warnings: int = 0
+    eval_results: list[EvalResult] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# --- Research Gap models ---
+
+
+class ResearchGap(BaseModel):
+    """An identified gap in the research evidence."""
+
+    gap_id: str
+    gap_title: str
+    why_it_matters: str
+    related_theme_ids: list[str] = Field(default_factory=list)
+    evidence_limitation: str = ""
+    recommended_follow_up: str = ""
+    priority: Literal["high", "medium", "low"] = "medium"
+    suggested_method: str = ""
+    suggested_participant_segment: str = ""
+    decision_it_would_inform: str = ""
+
+
+class ResearchGapReport(BaseModel):
+    """Full research gap analysis output."""
+
+    project_id: str
+    run_id: str
+    gaps: list[ResearchGap] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# --- Next Study Planner models ---
+
+
+class NextStudyPlan(BaseModel):
+    """Recommended next study based on research gaps."""
+
+    plan_id: str
+    study_objective: str
+    method_recommendation: str
+    target_participant_profile: str = ""
+    key_research_questions: list[str] = Field(default_factory=list)
+    suggested_tasks_or_topics: list[str] = Field(default_factory=list)
+    decision_it_would_inform: str = ""
+    why_this_method: str = ""
+    risks_and_limitations: list[str] = Field(default_factory=list)
+    priority: Literal["high", "medium", "low"] = "medium"
+
+
+class NextStudyPlanReport(BaseModel):
+    """Full next-study planning output."""
+
+    project_id: str
+    run_id: str
+    plans: list[NextStudyPlan] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# --- Pipeline Run Summary (observability) ---
+
+
+class PipelineRunSummary(BaseModel):
+    """Observable summary of a complete pipeline run."""
+
+    run_id: str
+    project_id: str
+    stages_completed: list[str] = Field(default_factory=list)
+    artifacts_created: list[str] = Field(default_factory=list)
+    agents_invoked: list[str] = Field(default_factory=list)
+    evals_passed: int = 0
+    evals_failed: int = 0
+    review_checkpoints_created: int = 0
+    unresolved_issues: list[str] = Field(default_factory=list)
+    next_suggested_action: str = ""
+    created_at: datetime = Field(default_factory=datetime.utcnow)

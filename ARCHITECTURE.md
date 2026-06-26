@@ -319,3 +319,84 @@ Reports include critic findings in their provenance chain, so stakeholders can s
 ---
 
 Full architecture designed for extensibility, auditability, research rigor, and integration with GitHub Copilot CLI for intelligent reasoning at every step.
+
+---
+
+## Research Intelligence Pipeline (Extended)
+
+The pipeline now extends beyond evidence verification into full research intelligence:
+
+```
+EXISTING PIPELINE (Ingestion → Extraction → Evaluation → Severity → Heuristic → Synthesis → Critique → Reconciliation)
+                                        ↓
+                            THEME ORCHESTRATION
+                     (Routes findings → parallel lanes)
+                                        ↓
+                    ┌─────────────────────────────────────────────┐
+                    │         PARALLEL THEMATIC SPECIALISTS         │
+                    │  Pain Points | Needs | Behavior | Mental     │
+                    │  Models | Trust | Workflow Breakdowns         │
+                    └─────────────────────────────────────────────┘
+                                        ↓
+                            THEME CONSOLIDATION
+                     (Merges overlapping themes across lanes)
+                                        ↓
+                    ENHANCED CONTRADICTION RECONCILIATION
+                     (Tensions as signal, not errors)
+                                        ↓
+                            EVALUATION RUBRIC
+                     (9-dimension quality checks)
+                                        ↓
+                         HUMAN REVIEW CHECKPOINTS
+                     (Auto-triggered for low confidence)
+                                        ↓
+                          RESEARCH GAP ANALYSIS
+                     (What we still don't know)
+                                        ↓
+                          NEXT STUDY PLANNING
+                     (Gaps → practical research plans)
+                                        ↓
+                      FINAL RESEARCH INTELLIGENCE REPORT
+                                        ↓
+                          PIPELINE RUN SUMMARY
+                     (Observable intermediate artifacts)
+```
+
+### New Agents Summary
+
+| Agent | Purpose | Input | Output |
+|-------|---------|-------|--------|
+| ut-theme-orchestrator | Route findings to thematic lanes | Findings | Orchestration plan |
+| ut-pain-point-analyst | Analyze pain points | Lane findings | Theme analysis |
+| ut-needs-analyst | Analyze user needs | Lane findings | Theme analysis |
+| ut-behavior-analyst | Analyze behavioral patterns | Lane findings | Theme analysis |
+| ut-mental-model-analyst | Analyze mental models | Lane findings | Theme analysis |
+| ut-trust-analyst | Analyze trust/confidence | Lane findings | Theme analysis |
+| ut-workflow-analyst | Analyze workflow breakdowns | Lane findings | Theme analysis |
+| ut-theme-consolidator | Merge themes across lanes | Lane analyses | Consolidated themes |
+| ut-contradiction-reconciler | Enhanced reconciliation | Contradictions | Reconciled interpretations |
+| ut-eval-rubric | Quality evaluation | Any artifact | Eval results |
+| ut-research-gap-finder | Identify gaps | Themes + reconciliations | Research gaps |
+| ut-next-study-planner | Plan follow-up studies | Research gaps | Study plans |
+| ut-run-summary | Pipeline observability | Run state | Run summary |
+
+### Evaluation Rubric Dimensions
+
+1. Evidence groundedness
+2. Specificity
+3. Research usefulness
+4. Actionability
+5. Appropriate confidence
+6. Provenance completeness
+7. Contradiction handling
+8. No overclaiming
+9. Output format validity
+
+### Human Review Checkpoint Triggers
+
+Checkpoints are automatically created when:
+- Confidence is high but evidence is limited (overclaiming risk)
+- An artifact fails the evaluation rubric
+- A contradiction reconciliation has low confidence
+- A theme has limited participant support
+- Evidence cannot be traced to source material
